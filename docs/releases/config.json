@@ -7,6 +7,6 @@
 			"image": "img/sendit_rev_c.jpg"
 		}
 	],
-	"firmware_url_base": "https://hoeken.github.io/sendit-firmware/releases/",
+	"firmware_url_base": "https://firmware.sendit.yarrboard.com/releases/",
 	"signing_key_path": "~/Dropbox/misc/yarrboard/yarrboard-firmware.pem"
 }

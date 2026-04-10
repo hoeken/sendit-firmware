@@ -2,7 +2,7 @@
     {
         "type": "SENDIT_REV_C",
         "version": "2.5.1",
-        "url": "https://hoeken.github.io/sendit-firmware/releases/SENDIT_REV_C/2.5.1.bin",
-        "changelog": "https://hoeken.github.io/sendit-firmware/releases/SENDIT_REV_C/CHANGELOG-2.5.1.md"
+        "url": "https://firmware.sendit.yarrboard.com/releases/SENDIT_REV_C/2.5.1.bin",
+        "changelog": "https://firmware.sendit.yarrboard.com/releases/SENDIT_REV_C/CHANGELOG-2.5.1.md"
     }
 ]
