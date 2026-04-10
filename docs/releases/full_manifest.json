@@ -5,6 +5,12 @@
     "description": "",
     "firmware": [
       {
+        "version": "2.5.1",
+        "url": "https://hoeken.github.io/sendit-firmware/releases/SENDIT_REV_C/2.5.1.bin",
+        "espwebtools_manifest": "https://hoeken.github.io/sendit-firmware/releases/SENDIT_REV_C/2.5.1-espwebtools/manifest.json",
+        "changelog": "# Version 2.5.1\n\n## Infrastructure\n\n- Split firmware into dedicated per-product repositories (sendit-firmware, brineomatic-firmware, frothfet-firmware)\n- Removed all Brineomatic and FrothFET source code, channels, controllers, and configuration\n- Removed bundled JS libs and channel scripts no longer needed by SendIt\n- Cleaned up unused ADC helper code and library dependencies\n- Updated board URLs in firmware config\n- Updated README with current project scope\n\n---"
+      },
+      {
         "version": "2.5.0",
         "url": "https://hoeken.github.io/yarrboard-firmware/releases/SENDIT_REV_C/2.5.0.bin",
         "espwebtools_manifest": "https://hoeken.github.io/yarrboard-firmware/releases/SENDIT_REV_C/2.5.0-espwebtools/manifest.json",
