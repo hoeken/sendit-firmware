@@ -12,6 +12,7 @@
 #include "ArduinoJson.h"
 #include "adchelper.h"
 #include "config.h"
+#include "etl/array.h"
 #include "etl/vector.h"
 #include <Arduino.h>
 #include <LittleFS.h>
@@ -60,6 +61,9 @@ class ADCChannel : public BaseChannel
     */
     char digitalInputMode[20] = "direct";
 
+    static const etl::array<const char*, 7> validTypes;
+    static const etl::array<const char*, 4> validDigitalInputModes;
+
     ADS1115Helper* adcHelper;
     uint8_t _adcChannel = 0;
 
@@ -71,8 +75,9 @@ class ADCChannel : public BaseChannel
 
     void init(uint8_t id) override;
     void setup();
-    bool loadConfig(JsonVariantConst config, char* error, size_t len) override;
-    void generateConfig(JsonVariant config) override;
+    bool sanitizeConfig(JsonVariant config, char* error, size_t err_size) override;
+    void loadConfig(JsonVariantConst config) override;
+    void generateConfig(JsonVariant config, UserRole role, ConfigPurpose purpose) override;
     void generateUpdate(JsonVariant config) override;
 
     bool parseCalibrationTableJson(JsonVariantConst root, char* error, size_t len);

@@ -12,6 +12,21 @@
 
 #ifdef YB_HAS_ADC_CHANNELS
 
+const etl::array<const char*, 7> ADCChannel::validTypes = {
+  "raw",
+  "digital_switch",
+  "thermistor",
+  "4-20ma",
+  "high_volt_divider",
+  "low_volt_divider",
+  "ten_k_pullup"};
+
+const etl::array<const char*, 4> ADCChannel::validDigitalInputModes = {
+  "direct",
+  "inverted",
+  "toggle_rising",
+  "toggle_falling"};
+
 unsigned int ADCChannel::getReading()
 {
   if (this->averageWindowMs == 0)
@@ -165,11 +180,76 @@ void ADCChannel::setup()
     this->adcHelper->setChannelWindow(_adcChannel, this->averageWindowMs);
 }
 
-bool ADCChannel::loadConfig(JsonVariantConst config, char* error, size_t len)
+bool ADCChannel::sanitizeConfig(JsonVariant config, char* error, size_t err_size)
 {
-  // make our parent do the work.
-  if (!BaseChannel::loadConfig(config, error, len))
+  if (!BaseChannel::sanitizeConfig(config, error, err_size))
     return false;
+
+  if (config["type"].is<const char*>()) {
+    const char* t = config["type"].as<const char*>();
+    bool found = false;
+    for (int i = 0; i < validTypes.size(); i++) {
+      if (!strcmp(t, validTypes[i])) {
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
+      snprintf(error, err_size, "Invalid type: %s", t);
+      config.remove("type");
+      return false;
+    }
+  }
+
+  if (config["digitalInputMode"].is<const char*>()) {
+    const char* m = config["digitalInputMode"].as<const char*>();
+    bool found = false;
+    for (int i = 0; i < validDigitalInputModes.size(); i++) {
+      if (!strcmp(m, validDigitalInputModes[i])) {
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
+      snprintf(error, err_size, "Invalid digitalInputMode: %s", m);
+      config.remove("digitalInputMode");
+      return false;
+    }
+  }
+
+  if (config["displayDecimals"].is<int>()) {
+    int dd = config["displayDecimals"].as<int>();
+    config["displayDecimals"] = max(0, min(4, dd));
+  }
+
+  if (config["averageWindowMs"].is<uint32_t>()) {
+    int aw = (int)config["averageWindowMs"].as<uint32_t>();
+    aw = max(0, min(10000, aw));
+    if (aw > 0)
+      aw = max(20, aw);
+    config["averageWindowMs"] = (uint32_t)aw;
+  }
+
+  if (config["useCalibrationTable"] | false) {
+    JsonVariant tv = config["calibrationTable"];
+    if (!tv.is<JsonArray>()) {
+      strlcpy(error, "\"calibrationTable\" must be an array", err_size);
+      return false;
+    }
+    for (JsonVariant row : tv.as<JsonArray>()) {
+      if (!row.is<JsonArray>() || row.as<JsonArray>().size() != 2) {
+        strlcpy(error, "Each calibrationTable entry must be [v, y]", err_size);
+        return false;
+      }
+    }
+  }
+
+  return true;
+}
+
+void ADCChannel::loadConfig(JsonVariantConst config)
+{
+  BaseChannel::loadConfig(config);
 
   const char* value;
 
@@ -179,27 +259,11 @@ bool ADCChannel::loadConfig(JsonVariantConst config, char* error, size_t len)
   value = config["digitalInputMode"].as<const char*>();
   snprintf(this->digitalInputMode, sizeof(this->digitalInputMode), "%s", (value && *value) ? value : "direct");
 
-  this->displayDecimals = 2;
-  if (config["displayDecimals"].is<unsigned int>()) {
-    this->displayDecimals = config["displayDecimals"];
-    this->displayDecimals = max(0, (int)this->displayDecimals);
-    this->displayDecimals = min(4, (int)this->displayDecimals);
-  }
+  this->displayDecimals = config["displayDecimals"] | (int)2;
 
-  this->averageWindowMs = YB_ADC_RUNNING_AVERAGE_WINDOW_MS;
-  if (config["averageWindowMs"].is<uint32_t>()) {
-    this->averageWindowMs = config["averageWindowMs"].as<uint32_t>();
-    this->averageWindowMs = max(0, (int)this->averageWindowMs);
-    this->averageWindowMs = min(10000, (int)this->averageWindowMs);
-
-    // needs to have a minimum window otherwise we will skip values
-    if (this->averageWindowMs > 0) {
-      this->averageWindowMs = max(20, (int)this->averageWindowMs);
-    }
-
-    if (this->adcHelper)
-      this->adcHelper->setChannelWindow(_adcChannel, this->averageWindowMs);
-  }
+  this->averageWindowMs = config["averageWindowMs"] | (uint32_t)YB_ADC_RUNNING_AVERAGE_WINDOW_MS;
+  if (this->adcHelper)
+    this->adcHelper->setChannelWindow(_adcChannel, this->averageWindowMs);
 
   this->useCalibrationTable = config["useCalibrationTable"] | false;
 
@@ -209,15 +273,15 @@ bool ADCChannel::loadConfig(JsonVariantConst config, char* error, size_t len)
   value = config["haDeviceClass"].as<const char*>();
   snprintf(this->haDeviceClass, sizeof(this->haDeviceClass), "%s", (value && *value) ? value : "none");
 
-  if (this->useCalibrationTable)
-    return this->parseCalibrationTableJson(config["calibrationTable"], error, len);
-
-  return true;
+  if (this->useCalibrationTable) {
+    char dummy[64];
+    this->parseCalibrationTableJson(config["calibrationTable"], dummy, sizeof(dummy));
+  }
 }
 
-void ADCChannel::generateConfig(JsonVariant config)
+void ADCChannel::generateConfig(JsonVariant config, UserRole role, ConfigPurpose purpose)
 {
-  BaseChannel::generateConfig(config);
+  BaseChannel::generateConfig(config, role, purpose);
 
   config["type"] = this->type;
   config["digitalInputMode"] = this->digitalInputMode;
