@@ -5,6 +5,12 @@
     "description": "",
     "firmware": [
       {
+        "version": "2.6.0",
+        "url": "https://firmware.sendit.yarrboard.com/releases/SENDIT_REV_C/2.6.0.bin",
+        "espwebtools_manifest": "https://firmware.sendit.yarrboard.com/releases/SENDIT_REV_C/2.6.0-espwebtools/manifest.json",
+        "changelog": "# Version 2.6.0\n\n## SendIt\n\n### \ud83d\udee0\ufe0f Improvements & Enhancements\n\n- **PSRAM Support**\n  - Enabled 8MB OPI PSRAM on ESP32-S3-WROOM-1-N16R8 (N16R8 variant)\n  - Moved mbedTLS dynamic allocations to PSRAM, freeing internal heap for concurrent TLS connections\n  - Configured asymmetric TLS record buffers (16KB in / 4KB out) to minimize per-session PSRAM usage\n  - Added `sdkconfig.defaults` to properly configure PSRAM via IDF Kconfig\n\n- **ADC Channel Config Validation**\n  - Introduced `sanitizeConfig()` to validate config inputs before applying them\n  - `type` field validated against whitelist: `raw`, `digital_switch`, `thermistor`, `4-20ma`, `high_volt_divider`, `low_volt_divider`, `ten_k_pullup`\n  - `digitalInputMode` validated against: `direct`, `inverted`, `toggle_rising`, `toggle_falling`\n  - `displayDecimals` clamped to 0\u20134; `averageWindowMs` clamped to 0\u201310000 (min 20 if non-zero)\n  - `calibrationTable` validated as a proper array of `[v, y]` pairs when `useCalibrationTable` is true\n\n## Infrastructure\n\n- Updated to YarrboardFramework v3.0.0\n- Updated firmware URL base to `firmware.sendit.yarrboard.com`\n\n---"
+      },
+      {
         "version": "2.5.1",
         "url": "https://firmware.sendit.yarrboard.com/releases/SENDIT_REV_C/2.5.1.bin",
         "espwebtools_manifest": "https://firmware.sendit.yarrboard.com/releases/SENDIT_REV_C/2.5.1-espwebtools/manifest.json",

@@ -1,8 +1,8 @@
 [
     {
         "type": "SENDIT_REV_C",
-        "version": "2.5.1",
-        "url": "https://firmware.sendit.yarrboard.com/releases/SENDIT_REV_C/2.5.1.bin",
-        "changelog": "https://firmware.sendit.yarrboard.com/releases/SENDIT_REV_C/CHANGELOG-2.5.1.md"
+        "version": "2.6.0",
+        "url": "https://firmware.sendit.yarrboard.com/releases/SENDIT_REV_C/2.6.0.bin",
+        "changelog": "https://firmware.sendit.yarrboard.com/releases/SENDIT_REV_C/CHANGELOG-2.6.0.md"
     }
 ]
