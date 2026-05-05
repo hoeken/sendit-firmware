@@ -1,25 +1,20 @@
-# LONG TERM:
+# v2.7
 
-* custom gauge layout for each state?  idle, running, stopping, pickling, etc?
-* update yarrboard client if any changes needed - probably for state
-* update signalk plugin - same
-
-* protocol documentation
-
-* signalk plugins
-    * should we move this to the firmware instead?
-    * frothfet plugin - use key for paths instead of id
-    * signalk sendit plugin - use key for paths instead of id
-* remove all onclick calls from the html.
-* global cleanup of strcpy, sprintf, etc.
-* refactor yarrboard-firmware into:
-    * frothfet-firmware
-    * brineomatic-firmware
-    * sendit-firmware
-* other MFD integrations:
-    * garmin?
-    * raymarine?
-
-# B&G MFD Dev Info
-B&G : User Agent: Mozilla/5.0 (X11; Linux aarch64) AppleWebKit/537.36 (KHTML, like Gecko) QtWebEngine/5.12.9 Chrome/69.0.3497.128 Safari/537.36
-https://ungoogled-software.github.io/ungoogled-chromium-binaries/releases/linux_portable/64bit/
+* add graphs for each channel
+    * firmware side
+        * make a class for it? dont bake it into ADCChannel
+        * store history in psram
+        * etl::circular_buffer (uint32_t timestamp, float value)
+        * 2^14 points / 1 per minute = 11.37 days
+        * 2^14 seconds  = 4.55 hours
+        * in ADCController add a page /graphdata
+            * id=?? GET param
+            * loop through circular buffer in chunks (512 / 1024)
+            * request.sendHeader("Content-Type", "application/octet-stream");
+            * write as raw data to the request
+    * client side 
+        * history via arrayBuffer / DataView
+        * updates via get_graph_data every xxx ms
+        * uplot or Chart.js for the library
+        * open a graph overlay when user clicks on the adc card
+        * how to handle date ranges / parsing data?  say we have 11 days of data...
