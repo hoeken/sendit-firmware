@@ -9,7 +9,7 @@
 #ifndef YARR_CONFIG_H
 #define YARR_CONFIG_H
 
-#define YB_FIRMWARE_VERSION "2.6.0"
+#define YB_FIRMWARE_VERSION "2.6.1"
 
 #if defined YB_CONFIG_SENDIT_REV_A
   #include "./configs/config.sendit-rev-a.h"
