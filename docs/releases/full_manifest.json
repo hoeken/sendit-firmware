@@ -5,6 +5,12 @@
     "description": "",
     "firmware": [
       {
+        "version": "2.6.1",
+        "url": "https://firmware.sendit.yarrboard.com/releases/SENDIT_REV_C/2.6.1.bin",
+        "espwebtools_manifest": "https://firmware.sendit.yarrboard.com/releases/SENDIT_REV_C/2.6.1-espwebtools/manifest.json",
+        "changelog": "# Version 2.6.1\n\n## Infrastructure\n\n- Updated to YarrboardFramework v3.0.3\n- Fixed coredump ELF file location in `parse_coredump.py` to match the `docs/releases/<board>/<version>.elf` layout\n\n---"
+      },
+      {
         "version": "2.6.0",
         "url": "https://firmware.sendit.yarrboard.com/releases/SENDIT_REV_C/2.6.0.bin",
         "espwebtools_manifest": "https://firmware.sendit.yarrboard.com/releases/SENDIT_REV_C/2.6.0-espwebtools/manifest.json",
